@@ -1,1 +1,1 @@
-web: bash -c "sleep 10 && gunicorn Gestion.wsgi:application --bind 0.0.0.0:8080 --workers 1 --timeout 180 --log-level debug"
+web: gunicorn Gestion.wsgi:application --bind 0.0.0.0:$PORT
