@@ -1,9 +1,8 @@
 from django.urls import path
-from django.http import HttpResponse
 from django.contrib.auth.views import LogoutView
 from . import views
-urlpatterns = [
 
+urlpatterns = [
     path('', views.inicio, name='inicio'),
     path('instrumentos/', views.lista_instrumentos, name='lista_instrumentos'),
     path('instrumento/nuevo/', views.crear_instrumento, name='crear_instrumento'),
