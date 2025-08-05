@@ -58,7 +58,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Requerimientos.wsgi.application'
+WSGI_APPLICATION = 'Gestion.wsgi.application'
 
 # Base de datos
 DATABASES = {
