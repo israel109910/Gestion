@@ -104,7 +104,7 @@ LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
 
 # Usuario personalizado
-AUTH_USER_MODEL = 'codigos.User'
+AUTH_USER_MODEL = 'Instrumentos.User'
 
 # Almacenamiento S3
 # settings.py — sección S3
