@@ -21,7 +21,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'storages',  # Para django-storages y S3
-    'codigos',
+    'Gestion.Instrumentos',  # Tu aplicación de instrumentos
+    'Gestion.Gestion',  # Tu aplicación de requerimientos
 ]
 
 # Middleware
