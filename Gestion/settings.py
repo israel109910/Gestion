@@ -40,7 +40,7 @@ MIDDLEWARE = [
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 # URL raíz de la app
-ROOT_URLCONF = 'Requerimientos.urls'
+ROOT_URLCONF = 'Gestion.urls'
 
 # Plantillas
 TEMPLATES = [
