@@ -1,10 +1,6 @@
-from django.http import HttpResponse
 from django.template.loader import render_to_string
 from weasyprint import HTML
 import tempfile
-import json
-
-from .models import Sitio, ParametrosGlobales
 
 def descargar_viaticos_pdf(request):
     if request.method == 'POST':
@@ -77,6 +73,6 @@ def descargar_viaticos_pdf(request):
                 return response
 
         except Exception as e:
-            return HttpResponse(f"Error al generar el PDF: {e}", status=400)
+            return HttpResponse("Error al generar el PDF", status=400)
 
     return HttpResponse("Método no permitido", status=405)
