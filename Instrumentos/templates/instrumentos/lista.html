@@ -27,7 +27,7 @@
     </form>
 
     <div class="d-flex justify-content-end flex-wrap mb-3">
-        <a href="{% url 'crear_instrumento' %}" class="btn btn-success">Nuevo Instrumento</a>
+        <a href="{% url 'instrumentos:crear_instrumento' %}" class="btn btn-success">Nuevo Instrumento</a>
     </div>
 
     <div class="table-responsive">
@@ -57,11 +57,11 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{% url 'detalle_instrumento' instrumento.id %}" class="btn btn-info btn-sm">Detalles</a>
+                        <a href="{% url 'instrumentos:detalle_instrumento' instrumento.id %}" class="btn btn-info btn-sm">Detalles</a>
                         {% if request.user.rol == "ADMIN" or request.user.laboratorio == instrumento.laboratorio %}
-                            <a href="{% url 'editar_instrumento' instrumento.id %}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{% url 'instrumentos:editar_instrumento' instrumento.id %}" class="btn btn-warning btn-sm">Editar</a>
                         {% endif %}
-                        <a href="{% url 'qr_pdf' instrumento.id %}" class="btn btn-secondary btn-sm">QR PDF</a>
+                        <a href="{% url 'instrumentos:qr_pdf' instrumento.id %}" class="btn btn-secondary btn-sm">QR PDF</a>
                     </td>
                 </tr>
                 {% empty %}
