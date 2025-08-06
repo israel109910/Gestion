@@ -6,18 +6,98 @@
     <meta charset="UTF-8">
     <title>Calculadora de Viáticos</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts for modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #fffbe6 0%, #ffe5b4 100%);
+            font-family: 'Montserrat', Arial, sans-serif;
+            min-height: 100vh;
+        }
+        .main-title {
+            color: #ff9800;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .card {
+            border-radius: 1.2rem;
+            box-shadow: 0 4px 24px 0 rgba(255, 152, 0, 0.10), 0 1.5px 4px 0 rgba(0,0,0,0.04);
+            border: none;
+        }
+        .card-title, .text-primary {
+            color: #ff9800 !important;
+        }
+        .btn-primary, .btn-outline-secondary, .btn-success {
+            border-radius: 2rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #ffb300 0%, #ff9800 100%);
+            border: none;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #ff9800 0%, #ffb300 100%);
+        }
+        .btn-outline-secondary {
+            color: #ff9800;
+            border-color: #ff9800;
+        }
+        .btn-outline-secondary:hover {
+            background: #ff9800;
+            color: #fff;
+        }
+        .form-select, .form-control {
+            border-radius: 1rem;
+            border: 1.5px solid #ffe0b2;
+        }
+        .form-check-input:checked {
+            background-color: #ff9800;
+            border-color: #ff9800;
+        }
+        .viaje-form h5 {
+            font-weight: 700;
+            color: #ffb300;
+        }
+        .result-card {
+            border-left: 6px solid #ff9800;
+            border-radius: 1.2rem;
+        }
+        details summary {
+            cursor: pointer;
+            color: #ff9800;
+            font-weight: 600;
+        }
+        details[open] summary {
+            color: #f57c00;
+        }
+        .text-success {
+            color: #f57c00 !important;
+        }
+        .badge-yellow {
+            background: #ffe082;
+            color: #ff9800;
+            font-weight: 600;
+            border-radius: 0.7rem;
+            padding: 0.3em 0.8em;
+        }
+    </style>
 </head>
 <body>
 <div class="container py-4">
-    <h2 class="text-primary">Calculadora de Viáticos</h2>
+    <div class="text-center mb-5">
+        <h2 class="main-title mb-2">Calculadora de Viáticos</h2>
+        <span class="badge badge-yellow fs-6">Modern UI</span>
+    </div>
 
     <div id="formularios-container">
-        <div class="viaje-form card p-3 mb-3">
-            <h5 class="text-primary">Viaje 1</h5>
+        <div class="viaje-form card p-4 mb-4">
+            <h5>Viaje 1</h5>
             <div class="row g-3">
                 <div class="col-md-4">
-                    <label>Estado:</label>
+                    <label class="form-label">Estado:</label>
                     <select class="form-select estado" required>
                         <option value="">Selecciona un estado</option>
                         {% for estado in estados %}
@@ -26,29 +106,29 @@
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label>Sección:</label>
+                    <label class="form-label">Sección:</label>
                     <select class="form-select seccion" required>
                         <option value="">Selecciona una sección</option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label>Sitio:</label>
+                    <label class="form-label">Sitio:</label>
                     <select class="form-select sitio" required>
                         <option value="">Selecciona un sitio</option>
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label>Personas:</label>
-                    <input type="number" class="form-control personas" required min="1" max="5">
+                    <label class="form-label">Personas:</label>
+                    <input type="number" class="form-control personas" required min="1" max="5" placeholder="Ej: 2">
                 </div>
                 <div class="col-md-4">
-                    <label>Días:</label>
-                    <input type="number" class="form-control dias" required min="1">
+                    <label class="form-label">Días:</label>
+                    <input type="number" class="form-control dias" required min="1" placeholder="Ej: 1">
                 </div>
                 <div class="col-md-4 align-self-end">
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input herramientas">
-                        <label class="form-check-label">¿Lleva herramienta?</label>
+                    <div class="form-check mt-3">
+                        <input type="checkbox" class="form-check-input herramientas" id="herramientas1">
+                        <label class="form-check-label" for="herramientas1">¿Lleva herramienta?</label>
                     </div>
                 </div>
             </div>
@@ -56,39 +136,38 @@
     </div>
 
     <div class="d-grid mb-3">
-        <button class="btn btn-outline-secondary" onclick="agregarFormulario()">Agregar otro viaje</button>
+        <button class="btn btn-outline-secondary" onclick="agregarFormulario()">
+            <i class="bi bi-plus-circle"></i> Agregar otro viaje
+        </button>
     </div>
 
     <form method="post" id="formulario-principal">
         {% csrf_token %}
         <input type="hidden" name="viajes_json" id="viajes_json">
         <div class="d-grid">
-            <button type="submit" class="btn btn-primary">Calcular Todos</button>
+            <button type="submit" class="btn btn-primary btn-lg shadow">Calcular Todos</button>
         </div>
     </form>
 </div>
 
 {% if resultado %}
 <div class="container mt-4">
-    <h3 class="text-success">Resultados</h3>
+    <h3 class="text-success mb-4">Resultados</h3>
     {% for r in resultado %}
-    <div class="card mb-3">
+    <div class="card mb-4 p-3 result-card shadow">
         <div class="card-body">
-            <h5 class="card-title">Resultado del viaje a {{ r.sitio }}</h5>
+            <h5 class="card-title mb-2">Resultado del viaje a <span class="text-primary">{{ r.sitio }}</span></h5>
             <p><strong>¿Requiere TAG?:</strong> {{ r.requiere_tag|yesno:"Sí,No" }}</p>
-
             {% if r.costo_peaje > 0 %}
-                <p><strong>Costo de Peaje:</strong> ${{ r.costo_peaje|floatformat:2 }}</p>
+                <p><strong>Costo de Peaje:</strong> <span class="badge badge-yellow">${{ r.costo_peaje|floatformat:2 }}</span></p>
             {% endif %}
-
             <hr>
-            <h6>Desglose de costos</h6>
-            <ul class="list-unstyled">
-                <li><strong>Gasolina:</strong> ${{ r.costo_gasolina|floatformat:2 }}</li>
-                <li><strong>Peajes:</strong> ${{ r.costo_peaje|floatformat:2 }}</li>
-                <li><strong>Total estimado:</strong> <span class="text-success">${{ r.costo_total|floatformat:2 }}</span></li>
+            <h6 class="mb-2">Desglose de costos</h6>
+            <ul class="list-unstyled mb-2">
+                <li><strong>Gasolina:</strong> <span class="badge badge-yellow">${{ r.costo_gasolina|floatformat:2 }}</span></li>
+                <li><strong>Peajes:</strong> <span class="badge badge-yellow">${{ r.costo_peaje|floatformat:2 }}</span></li>
+                <li><strong>Total estimado:</strong> <span class="text-success fs-5">${{ r.costo_total|floatformat:2 }}</span></li>
             </ul>
-
             <details class="mt-3">
                 <summary class="text-muted">Ver detalle del cálculo</summary>
                 <ul class="mt-2">
@@ -114,6 +193,9 @@
     {% endfor %}
 </div>
 {% endif %}
+
+<!-- Bootstrap Icons CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
 <script>
     const secciones = {{ secciones_json|safe }};
@@ -159,6 +241,13 @@
             if (input.type === 'checkbox') input.checked = false;
             else input.value = '';
         });
+        // Cambia el id del checkbox para accesibilidad
+        const checkbox = nueva.querySelector('.herramientas');
+        const label = nueva.querySelector('.form-check-label');
+        const newId = 'herramientas' + contador;
+        checkbox.id = newId;
+        label.setAttribute('for', newId);
+
         contenedor.appendChild(nueva);
         actualizarEventos();
     }
