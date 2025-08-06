@@ -1,8 +1,15 @@
-from django.template.loader import render_to_string
-from weasyprint import HTML
-import tempfile
+from django.shortcuts import render
+from django.http import HttpResponse
+import json
 
-def descargar_viaticos_pdf(request):
+from .models import Estado, Seccion, Sitio, ParametrosGlobales
+
+def calcular_viaticos(request):
+    estados = Estado.objects.all()
+    secciones = Seccion.objects.all()
+    sitios = Sitio.objects.all()
+    resultado = None
+
     if request.method == 'POST':
         viajes_json = request.POST.get('viajes_json')
         try:
@@ -62,17 +69,17 @@ def descargar_viaticos_pdf(request):
                     }
                 })
 
-            html_string = render_to_string('viaticos_pdf.html', {'resultados': resultados})
-            html = HTML(string=html_string)
-
-            response = HttpResponse(content_type='application/pdf')
-            response['Content-Disposition'] = 'attachment; filename=viaticos.pdf'
-
-            with tempfile.NamedTemporaryFile(delete=True) as tmp:
-                html.write_pdf(target=response)
-                return response
+            resultado = resultados
 
         except Exception as e:
-            return HttpResponse("Error al generar el PDF", status=400)
+            resultado = [{'error': 'Datos inválidos o incompletos.'}]
 
-    return HttpResponse("Método no permitido", status=405)
+    secciones_dict = {s.id: {'nombre': s.nombre, 'estado_id': s.estado.id} for s in secciones}
+    sitios_dict = {s.id: {'nombre': s.nombre, 'seccion_id': s.seccion.id} for s in sitios}
+
+    return render(request, 'viaticos.html', {
+        'estados': estados,
+        'resultado': resultado,
+        'secciones_json': json.dumps(secciones_dict),
+        'sitios_json': json.dumps(sitios_dict),
+    })
