@@ -1,5 +1,3 @@
-# Gasolina/views.py
-
 from django.shortcuts import render
 from django.http import HttpResponse
 import json
@@ -10,13 +8,15 @@ def calcular_viaticos(request):
     estados = Estado.objects.all()
     secciones = Seccion.objects.all()
     sitios = Sitio.objects.all()
-    resultados = []
+    resultado = None
 
     if request.method == 'POST':
         viajes_json = request.POST.get('viajes_json')
         try:
             viajes = json.loads(viajes_json)
             parametros = ParametrosGlobales.objects.first()
+            resultados = []
+
             for viaje in viajes:
                 sitio_id = viaje.get('sitio')
                 personas = int(viaje.get('personas'))
@@ -24,15 +24,26 @@ def calcular_viaticos(request):
                 herramientas = viaje.get('herramientas')
 
                 sitio = Sitio.objects.get(id=sitio_id)
+
                 km_totales = float(sitio.distancia_km)
-                peso_personal = personas * float(parametros.peso_prom_persona)
-                peso_herramientas = float(parametros.peso_herramienta) if herramientas else 0.0
+                peso_prom_persona = float(parametros.peso_prom_persona)
+                peso_herramienta = float(parametros.peso_herramienta)
+                rendimiento_base = float(parametros.rendimiento_km_l)
+                precio_gasolina = float(parametros.precio_gasolina)
+                factor_penalizacion = float(parametros.factor_penalizacion)
+                costo_peaje = float(sitio.costo_peaje) if sitio.requiere_tag else 0.0
+
+                peso_personal = personas * peso_prom_persona
+                peso_herramientas = peso_herramienta if herramientas else 0.0
                 peso_total = peso_personal + peso_herramientas
                 peso_relativo = peso_total / 100
 
-                rendimiento_ajustado = float(parametros.rendimiento_km_l) - (peso_relativo / float(parametros.factor_penalizacion))
-                costo_peaje = float(sitio.costo_peaje) if sitio.requiere_tag else 0.0
-                costo_gasolina = 0 if rendimiento_ajustado <= 0 else ((km_totales / rendimiento_ajustado) * float(parametros.precio_gasolina)) * dias
+                rendimiento_ajustado = rendimiento_base - (peso_relativo / factor_penalizacion)
+
+                if rendimiento_ajustado <= 0:
+                    costo_gasolina = 0
+                else:
+                    costo_gasolina = ((km_totales / rendimiento_ajustado) * precio_gasolina) * dias
 
                 resultados.append({
                     'sitio': sitio.nombre,
@@ -44,17 +55,31 @@ def calcular_viaticos(request):
                         'personas': personas,
                         'dias': dias,
                         'herramientas': herramientas,
+                        'peso_prom_persona': peso_prom_persona,
+                        'peso_herramienta': peso_herramienta if herramientas else 0.0,
                         'peso_total': round(peso_total, 2),
+                        'peso_relativo': round(peso_relativo, 2),
+                        'distancia_km': km_totales,
+                        'rendimiento_base': rendimiento_base,
                         'rendimiento_ajustado': round(rendimiento_ajustado, 2),
-                        'formula': f"((km_totales / rendimiento_ajustado) * precio_gas) * dias"
+                        'precio_gasolina': precio_gasolina,
+                        'factor_penalizacion': factor_penalizacion,
+                        'formula': "((distancia / rendimiento_ajustado) * precio_gasolina) * dias",
+                        'explicacion_rendimiento': f"{rendimiento_base} - ({round(peso_relativo,2)} / {factor_penalizacion}) = {round(rendimiento_ajustado,2)}"
                     }
                 })
+
+            resultado = resultados
+
         except Exception as e:
-            resultados.append({'error': 'Datos inválidos o incompletos.'})
+            resultado = [{'error': 'Datos inválidos o incompletos.'}]
+
+    secciones_dict = {s.id: {'nombre': s.nombre, 'estado_id': s.estado.id} for s in secciones}
+    sitios_dict = {s.id: {'nombre': s.nombre, 'seccion_id': s.seccion.id} for s in sitios}
 
     return render(request, 'viaticos.html', {
         'estados': estados,
-        'resultado': resultados,
-        'secciones_json': json.dumps({s.id: {'nombre': s.nombre, 'estado_id': s.estado.id} for s in secciones}),
-        'sitios_json': json.dumps({s.id: {'nombre': s.nombre, 'seccion_id': s.seccion.id} for s in sitios}),
+        'resultado': resultado,
+        'secciones_json': json.dumps(secciones_dict),
+        'sitios_json': json.dumps(sitios_dict),
     })
