@@ -9,6 +9,7 @@ def calcular_viaticos(request):
     secciones = Seccion.objects.all()
     sitios = Sitio.objects.all()
     resultado = None
+    total_general = 0  # <--- TOTAL acumulado
 
     if request.method == 'POST':
         viajes_json = request.POST.get('viajes_json')
@@ -45,12 +46,15 @@ def calcular_viaticos(request):
                 else:
                     costo_gasolina = ((km_totales / rendimiento_ajustado) * precio_gasolina) * dias
 
+                costo_total = round(costo_gasolina + costo_peaje, 2)
+                total_general += costo_total  # <--- sumar al total
+
                 resultados.append({
                     'sitio': sitio.nombre,
                     'requiere_tag': sitio.requiere_tag,
                     'costo_peaje': costo_peaje,
                     'costo_gasolina': round(costo_gasolina, 2),
-                    'costo_total': round(costo_gasolina + costo_peaje, 2),
+                    'costo_total': costo_total,
                     'detalle': {
                         'personas': personas,
                         'dias': dias,
@@ -80,6 +84,7 @@ def calcular_viaticos(request):
     return render(request, 'viaticos.html', {
         'estados': estados,
         'resultado': resultado,
+        'total_general': round(total_general, 2),  # <--- pasar al template
         'secciones_json': json.dumps(secciones_dict),
         'sitios_json': json.dumps(sitios_dict),
     })

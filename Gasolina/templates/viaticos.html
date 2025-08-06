@@ -22,23 +22,22 @@
         }
         .card {
             border-radius: 1.2rem;
-            box-shadow: 0 2px 12px 0 rgba(255, 152, 0, 0.07), 0 1.5px 4px 0 rgba(0,0,0,0.03);
-            border: 1.5px solid #ffe0b2;
+            box-shadow: 0 2px 12px 0 rgba(0,0,0,0.04);
+            border: 1.5px solid #f3f3f3;
             background: #fff;
         }
-        .card-title, .text-primary {
+        .card-title {
             color: #ff9800 !important;
-        }
-        .btn-primary, .btn-outline-secondary, .btn-success {
-            border-radius: 2rem;
             font-weight: 600;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 8px 0 rgba(255, 152, 0, 0.08);
         }
         .btn-primary {
             background: #ffb300;
             border: none;
             color: #fff;
+            border-radius: 2rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px 0 rgba(255, 152, 0, 0.08);
         }
         .btn-primary:hover {
             background: #ff9800;
@@ -48,6 +47,8 @@
             color: #ff9800;
             border-color: #ff9800;
             background: #fff;
+            border-radius: 2rem;
+            font-weight: 600;
         }
         .btn-outline-secondary:hover {
             background: #ff9800;
@@ -55,7 +56,7 @@
         }
         .form-select, .form-control {
             border-radius: 1rem;
-            border: 1.5px solid #ffe0b2;
+            border: 1.5px solid #e0e0e0;
             background: #fff;
         }
         .form-check-input:checked {
@@ -64,7 +65,7 @@
         }
         .viaje-form h5 {
             font-weight: 700;
-            color: #ffb300;
+            color: #ff9800;
         }
         .result-card {
             border-left: 6px solid #ff9800;
@@ -80,7 +81,7 @@
             color: #f57c00;
         }
         .text-success {
-            color: #f57c00 !important;
+            color: #388e3c !important;
         }
         .badge-yellow {
             background: #ffe082;
@@ -89,12 +90,25 @@
             border-radius: 0.7rem;
             padding: 0.3em 0.8em;
         }
+        /* Neutrals for table and form */
+        .form-label, .form-check-label, .form-control, .form-select {
+            color: #333;
+        }
+        .mb-2.main-title {
+            margin-bottom: 0.5rem !important;
+        }
+        /* Only highlight key numbers and actions */
+        .highlight {
+            color: #ff9800;
+            font-weight: 700;
+        }
     </style>
 </head>
 <body>
 <div class="container py-4">
     <div class="text-center mb-5">
         <h2 class="main-title mb-2">Calculadora de Viáticos</h2>
+        <span class="badge badge-yellow fs-6">Corporativo</span>
     </div>
 
     <div id="formularios-container">
@@ -161,8 +175,8 @@
     {% for r in resultado %}
     <div class="card mb-4 p-3 result-card shadow">
         <div class="card-body">
-            <h5 class="card-title mb-2">Resultado del viaje a <span class="text-primary">{{ r.sitio }}</span></h5>
-            <p><strong>¿Requiere TAG?:</strong> {{ r.requiere_tag|yesno:"Sí,No" }}</p>
+            <h5 class="card-title mb-2">Resultado del viaje a <span class="highlight">{{ r.sitio }}</span></h5>
+            <p><strong>¿Requiere TAG?:</strong> <span class="highlight">{{ r.requiere_tag|yesno:"Sí,No" }}</span></p>
             {% if r.costo_peaje > 0 %}
                 <p><strong>Costo de Peaje:</strong> <span class="badge badge-yellow">${{ r.costo_peaje|floatformat:2 }}</span></p>
             {% endif %}
@@ -171,7 +185,7 @@
             <ul class="list-unstyled mb-2">
                 <li><strong>Gasolina:</strong> <span class="badge badge-yellow">${{ r.costo_gasolina|floatformat:2 }}</span></li>
                 <li><strong>Peajes:</strong> <span class="badge badge-yellow">${{ r.costo_peaje|floatformat:2 }}</span></li>
-                <li><strong>Total estimado:</strong> <span class="text-success fs-5">${{ r.costo_total|floatformat:2 }}</span></li>
+                <li><strong>Total estimado:</strong> <span class="highlight fs-5">${{ r.costo_total|floatformat:2 }}</span></li>
             </ul>
             <details class="mt-3">
                 <summary class="text-muted">Ver detalle del cálculo</summary>
@@ -194,9 +208,11 @@
                 </ul>
             </details>
         </div>
-        
     </div>
     {% endfor %}
+     <div class="alert alert-success text-end fs-5 fw-bold mt-4">
+        Total acumulado de todos los viajes: <span class="highlight">${{ total_general|floatformat:2 }}</span>
+    </div>
 </div>
 {% endif %}
 
