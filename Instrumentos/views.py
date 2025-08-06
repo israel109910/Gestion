@@ -53,8 +53,12 @@ def user_passes_test_with_message(test_func, login_url=None, message="No tienes 
 @login_required
 @user_passes_test_with_message(es_lab_o_admin)
 def inicio(request):
-    return render(request, 'inicio.html')
+    return render(request, 'main.html')
 
+@login_required
+@user_passes_test_with_message(es_lab_o_admin)  
+def inicio_instrumentos(request):
+    return render(request, 'inicio.html')
 # --------------------------
 # Lista de instrumentos
 # --------------------------
