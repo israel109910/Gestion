@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages  
-from django.http import HttpResponse, FileResponse  # Fixed import
+from django.http import HttpResponse, FileResponse
 from django.db.models import Q
 from .models import Instrumento, Laboratorio
 from .forms import InstrumentoForm, InstrumentoFormLab
@@ -43,7 +43,7 @@ def user_passes_test_with_message(test_func, login_url=None, message="No tienes 
                 return view_func(request, *args, **kwargs)
             if login_url:
                 return redirect(login_url)
-            return redirect('unauthorized')
+            return redirect('instrumentos:unauthorized')
         return _wrapped_view
     return decorator
 
@@ -113,7 +113,7 @@ def crear_instrumento(request):
             instrumento.laboratorio = request.user.laboratorio
         instrumento.save()
         messages.success(request, "Instrumento creado correctamente.")
-        return redirect('lista_instrumentos')
+        return redirect('instrumentos:lista_instrumentos')
 
     return render(request, 'instrumentos/formulario.html', {'form': form})
 
@@ -128,7 +128,7 @@ def editar_instrumento(request, instrumento_id):
 
     if request.user.rol == 'LAB' and instrumento.laboratorio != request.user.laboratorio:
         messages.error(request, "No tienes permiso para editar este instrumento.")
-        return redirect('lista_instrumentos')
+        return redirect('instrumentos:lista_instrumentos')
 
     if request.method == 'POST':
         form = InstrumentoForm(request.POST, request.FILES, instance=instrumento)
@@ -138,7 +138,7 @@ def editar_instrumento(request, instrumento_id):
                 instrumento.laboratorio = request.user.laboratorio
             instrumento.save()
             messages.success(request, "Instrumento actualizado correctamente.")
-            return redirect('lista_instrumentos')
+            return redirect('instrumentos:lista_instrumentos')
     else:
         form = InstrumentoForm(instance=instrumento)
 
