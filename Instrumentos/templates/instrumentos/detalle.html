@@ -21,9 +21,9 @@
 
     <div class="text-center">
         <h4 class="mb-3">Código QR</h4>
-        <img src="{% url 'generar_qr' instrumento.id %}" alt="Código QR" class="img-fluid mb-3" />
+        <img src="{% url 'instrumentos:generar_qr' instrumento.id %}" alt="Código QR" class="img-fluid mb-3" />
         <br />
-        <a href="{% url 'qr_pdf' instrumento.id %}" class="btn btn-primary" target="_blank">
+        <a href="{% url 'instrumentos:qr_pdf' instrumento.id %}" class="btn btn-primary" target="_blank">
             Descargar QR en PDF
         </a>
     </div>
