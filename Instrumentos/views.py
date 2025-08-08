@@ -1,3 +1,4 @@
+from urllib import request
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages  
@@ -169,7 +170,7 @@ def validar_certificado(request, uuid):
 @user_passes_test_with_message(es_lab_o_admin)
 def generar_qr(request, instrumento_id):
     instrumento = get_object_or_404(Instrumento, id=instrumento_id)
-    url = request.build_absolute_uri(f"/validar/{instrumento.uuid}/")
+    url = request.build_absolute_uri(f"/instrumentos/validar/{instrumento.uuid}/")
     qr_img = qrcode.make(url)
     buffer = BytesIO()
     qr_img.save(buffer)
